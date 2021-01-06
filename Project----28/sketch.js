@@ -5,15 +5,15 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 
 var mango_i , stone_i,tree_i,boy_i ;
-var mango,mango2,mango3,mango4 , tree , stone , boy ;
-var chain1
+var mango,mango2,mango3,mango4 , tree , stone , boy , ground ;
+var launcher 
 
 function preload()
 {
-	 mango_i = loadImage(mango.png);
- 	 stone_i = loadImage(stone.png);
-	 tree_i = loadImage(tree.png);
-	 boy_i =  loadImage(boy.png);
+	 mango_i = loadImage("Plucking mangoes/mango.png");
+	  stone_i = loadImage("Plucking mangoes /stone.png");
+	  tree_i = loadImage("Plucking mangoes /tree.png");
+	 boy_i =  loadImage("Plucking mangoes /boy.png");
 	
 }
 
@@ -24,13 +24,13 @@ function setup() {
 	engine = Engine.create();
 	world = engine.world;
 	tree = rect(650,600,200,600);
-	tree.addImage(tree_i);
+	//tree.addImage(tree_i);
 	
 	boy = rect(150,600,50,150);
-	boy.addImage(boy_i);
+	//boy.addImage(boy_i);
 	
 	stone = rect(235,420,40,40);
-	stone.addImage(stone_i);
+	//stone.addImage(stone_i);
 
 	mango = new Mango(700,250,50);
 	mango.addImage(mango_i);
@@ -47,7 +47,19 @@ function setup() {
 	mango4 = new Mango(700,450,50);
 	mango4.addImage(mango_i);
 
-	chain1 = new Chain(boy,stone);
+	tree=new Tree(1050,580);
+	ground=new Ground(width/2,600,width,20);
+	launcher=new launcher(stone.body,{x:235,y:420})
+  var render = Render.create({
+    element: document.body,
+    engine: engine,
+    options: {
+      width: 1300,
+      height: 600,
+      wireframes: false
+    }
+  });
+	//chain1 = new Chain(boy,stone);
 	
 	Engine.run(engine);
   
@@ -80,28 +92,36 @@ function draw() {
   drawSprites();
  
 }
-function mouseDragged(){
-	Matter.Body.setPosition(boy.body,stone.body);
-}   
-  	function mouseReleased(){
-		chain.fly();
+function mouseDragged()
+{
+	Matter.Body.setPosition(stoneObj.body, {x:mouseX, y:mouseY}) 
+}
+
+function mouseReleased()
+{
+	launcherObject.fly();
+    
+}
+
+function keyPressed() {
+	if (keyCode === 32) {
+    Matter.Body.setPosition(stoneObj.body, {x:235, y:420}) 
+	  launcherObject.attach(stoneObj.body);
 	}
-function detectCollision(lstone,lmango){
+  }
 
-mangoBodyPosition = lmango.body.Position
-stoneBodyposition = lstone.body.Position
+  function detectollision(lstone,lmango){
+	
+  mangoBodyPosition=lmango.body.position
+  stoneBodyPosition=lstone.body.position
+  
+  var distance=dist(stoneBodyPosition.x, stoneBodyPosition.y, mangoBodyPosition.x, mangoBodyPosition.y)
+ 
+  	if(distance<=lmango.r+lstone.r)
+    {
+      
+  	  Matter.Body.setStatic(lmango.body,false);
+    }
 
-var distance = dist(stoneBodyposition.x,stoneBodyposition.y,mangoBodyPosition.x,mangoBodyPosition.y)
-
-if(distance<-lstone+lmango){
-	Matter.Body.setStatic(lmango,false)
-}
-
-}
-function keyPressed(){
-	if(keyCode === 32){
-	Matter.Body.setPosition(stone,{x:235 , y:400})
-	chain.attach(stoneBody);
-	}
-}
+  }
 
